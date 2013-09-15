@@ -51,15 +51,7 @@ public:
         IPCThreadState::self()->joinThreadPool();
     }
 
-    static void instantiate() {
-        status_t status = publish();
-      if(status != NO_ERROR){
-          int pid = getpid();
-          if(pid> 0){
-              kill(pid, SIGKILL);
-          }
-      }
-    }
+    static void instantiate() { publish(); }
 
     static status_t shutdown() {
         return NO_ERROR;
