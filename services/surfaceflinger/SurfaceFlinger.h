@@ -41,6 +41,7 @@
 
 #include <gui/ISurfaceComposer.h>
 #include <gui/ISurfaceComposerClient.h>
+#include <gui/BufferQueue.h>
 
 #include <hardware/hwcomposer_defs.h>
 
@@ -154,6 +155,7 @@ private:
     /* ------------------------------------------------------------------------
      * Internal data structures
      */
+    Rect mSwapDirtyRect;
 
     class LayerVector : public SortedVector< sp<Layer> > {
     public:
@@ -260,6 +262,14 @@ private:
     // Read virtual display properties
     void setVirtualDisplayData( int32_t hwcDisplayId,
                                 const sp<IGraphicBufferProducer>& sink);
+
+    // Configure Virtual Display parameters such as the display surface
+    // and the buffer queue
+    void configureVirtualDisplay(int32_t &hwcDisplayId,
+            sp<DisplaySurface> &dispSurface,
+            sp<IGraphicBufferProducer> &producer,
+            const DisplayDeviceState state,
+            sp<BufferQueue> bq);
 
     /* handlePageFilp: this is were we latch a new buffer
      * if available and compute the dirty region.
@@ -401,6 +411,7 @@ private:
 
     void postFramebuffer();
     void drawWormhole(const sp<const DisplayDevice>& hw, const Region& region) const;
+    void setupSwapRect();
 
     /* ------------------------------------------------------------------------
      * Display management
@@ -485,6 +496,8 @@ private:
     nsecs_t mLastTransactionTime;
     bool mBootFinished;
     bool mUseDithering;
+    int mSwapRectEnable;
+
 
     // these are thread safe
     mutable MessageQueue mEventQueue;
